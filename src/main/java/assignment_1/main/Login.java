@@ -1,109 +1,77 @@
+package assignment_1.main;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package assignment_1.main;
 
 import java.util.regex.Pattern;
 
 public class Login {
-
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
-    private String cellPhone;
-    private boolean isLoggedIn;
+    private String registeredFirstName;
+    private String registeredLastName;
+    private String registeredUsername;
+    private String registeredPassword;
+    private String registeredCellPhone;
+    private String loggedInUser;   // stores the username after successful login
 
     public Login() {
-        isLoggedIn = false;
-    }
-
-    public boolean loginUser(String inputUsername, String inputPassword) {
-        if (username != null && username.equals(inputUsername) && password != null && password.equals(inputPassword)) {
-            isLoggedIn = true;
-            return true;
-        } else {
-            isLoggedIn = false;
-            return false;
-        }
+        loggedInUser = "";
     }
 
     public String registerUser(String firstName, String lastName, String username, String password, String cellPhone) {
-        // Validate first – only store if all checks pass
-        if (!checkUserName(username)) {
-            return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
+        
+        // Validate username
+        if (!username.contains("_") || username.length() > 5) {
+            return "Username is not correctly formatted. Please ensure it contains an underscore and is at most 5 characters long.";
         }
-        if (!checkPasswordComplexity(password)) {
-            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
+
+        // Validate password
+        boolean hasCapital = false;
+        boolean hasNumber = false;
+        boolean hasSpecial = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasCapital = true;
+            if (Character.isDigit(c)) hasNumber = true;
+            if (!Character.isLetterOrDigit(c)) hasSpecial = true;
         }
-        if (!checkCellPhoneNumber(cellPhone)) {
-            return "Cell phone number incorrectly formatted or does not contain international code.";
+        if (password.length() < 8 || !hasCapital || !hasNumber || !hasSpecial) {
+            return "Password is not correctly formatted. Please ensure it is at least 8 characters long, contains a capital letter, a number, and a special character.";
         }
-        // All validations passed – store credentials
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.cellPhone = cellPhone;
+
+        // Validate cell phone number
+        if (!cellPhone.matches("^\\+27[0-9]{9}$")) {
+            return "Cell phone number is not correctly formatted. Please use +27 followed by 9 digits (e.g., +27831234567).";
+        }
+
+        // Store data
+        registeredFirstName = firstName;
+        registeredLastName = lastName;
+        registeredUsername = username;
+        registeredPassword = password;
+        registeredCellPhone = cellPhone;
+
         return "Registration successful! You can now log in.";
     }
 
-    // Public methods for unit testing
-    public boolean checkUserName() {
-        return checkUserName(this.username);
-    }
-
-    public boolean checkPasswordComplexity() {
-        return checkPasswordComplexity(this.password);
-    }
-
-    public boolean checkCellPhoneNumber() {
-        return checkCellPhoneNumber(this.cellPhone);
-    }
-
-    // Private validation helpers
-    private boolean checkUserName(String username) {
-        return username != null && username.contains("_") && username.length() <= 5;
-    }
-
-    private boolean checkPasswordComplexity(String password) {
-        if (password == null || password.length() < 8) return false;
-        boolean hasUpper = false, hasDigit = false, hasSpecial = false;
-        for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) hasUpper = true;
-            if (Character.isDigit(c)) hasDigit = true;
-            if (!Character.isLetterOrDigit(c)) hasSpecial = true;
+    public boolean loginUser(String username, String password) {
+        if (registeredUsername != null && registeredUsername.equals(username) &&
+            registeredPassword != null && registeredPassword.equals(password)) {
+            loggedInUser = username;
+            return true;
         }
-        return hasUpper && hasDigit && hasSpecial;
-    }
-
-    private boolean checkCellPhoneNumber(String cellPhone) {
-        String regex = "^\\+27[0-9]{9}$";
-        return cellPhone != null && Pattern.matches(regex, cellPhone);
-    }
-
-    public String getPasswordMessage() {
-        if (password != null && checkPasswordComplexity(password)) {
-            return "Password successfully captured.";
-        } else {
-            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
-        }
-    }
-
-    public String getCellPhoneMessage() {
-        if (cellPhone != null && checkCellPhoneNumber(cellPhone)) {
-            return "Cell number successfully captured.";
-        } else {
-            return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
-        }
+        return false;
     }
 
     public String returnLoginStatus() {
-        if (isLoggedIn) {
-            return "Welcome " + firstName + ", " + lastName + " it is great to see you.";
+        if (loggedInUser == null || loggedInUser.isEmpty()) {
+            return "Login failed. Please check your credentials.";
         } else {
-            return "Username or password incorrect, please try again.";
+            return "Welcome " + loggedInUser + "!";
         }
+    }
+
+    public String getLoggedInUser() {
+        return loggedInUser == null ? "" : loggedInUser;
     }
 }

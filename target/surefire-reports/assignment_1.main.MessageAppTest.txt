@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: assignment_1.main.MessageAppTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.218 s - in assignment_1.main.MessageAppTest
